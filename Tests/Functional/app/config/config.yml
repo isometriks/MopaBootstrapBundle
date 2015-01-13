@@ -1,0 +1,22 @@
+parameters:
+    locale: en
+    secret: ThisTokenIsNotSoSecretChangeIt
+
+framework:
+    test: ~
+    templating: { engines: ['twig'] }
+    session:
+        storage_id: session.storage.mock_file
+    secret: %secret%
+    default_locale: %locale%
+
+assetic:
+    debug:          %kernel.debug%
+    use_controller: false
+    bundles:        [ MopaBootstrapBundle ]
+    filters:
+        cssrewrite: ~
+        less:
+            node: /usr/local/bin/node
+            node_paths: [/usr/lib/node_modules]
+            apply_to: "\.less$"
