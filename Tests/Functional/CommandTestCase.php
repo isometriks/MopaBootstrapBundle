@@ -2,8 +2,12 @@
 
 namespace Mopa\Bundle\BootstrapBundle\Tests\Functional;
 
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\StreamOutput;
 
 abstract class CommandTestCase extends WebTestCase
 {
@@ -11,16 +15,22 @@ abstract class CommandTestCase extends WebTestCase
     {
         $command->setApplication(new Application($this->createClient()->getKernel()));
 
-        if ($command instanceof \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand) {
+        if ($command instanceof ContainerAwareCommand) {
             $command->setContainer($this->createClient()->getContainer());
         }
 
-        $arguments = array_replace(array('command' => $command->getName()), $arguments);
-        $options = array_replace(array('--env' => 'test'), $options);
+        $definition = $command->getDefinition();
+        $definition->addOption(new InputOption('env'));
 
-        $commandTester = new CommandTester($command);
-        $commandTester->execute($arguments, $options);
+        $input = new ArrayInput($arguments, $definition);
+        $output = new StreamOutput(fopen('php://memory', 'w', false));
 
-        return $commandTester->getDisplay();
+        $command->run($input, $output);
+
+        rewind($output->getStream());
+
+        $display = stream_get_contents($output->getStream());
+
+        return $display;
     }
 }

@@ -9,17 +9,17 @@ use Mopa\Bundle\BootstrapBundle\Form\Extension\LegendFormTypeExtension;
 use Mopa\Bundle\BootstrapBundle\Form\Extension\StaticTextExtension;
 use Mopa\Bundle\BootstrapBundle\Form\Extension\TabbedFormTypeExtension;
 use Mopa\Bundle\BootstrapBundle\Form\Extension\WidgetFormTypeExtension;
-use Mopa\Bundle\BootstrapBundle\Twig\FormExtension as FormExtension2;
+use Mopa\Bundle\BootstrapBundle\Twig\FormExtension as MopaFormExtension;
 use Mopa\Bundle\BootstrapBundle\Twig\IconExtension;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubTranslator;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Twig_Environment;
 
 abstract class AbstractDivLayoutTest extends FormIntegrationTestCase
 {
@@ -29,7 +29,7 @@ abstract class AbstractDivLayoutTest extends FormIntegrationTestCase
     protected function setUp()
     {
         // Setup factory for tabs
-        $this->tabFactory = \Symfony\Component\Form\Forms::createFormFactory();
+        $this->tabFactory = Forms::createFormFactory();
 
         parent::setUp();
 
@@ -58,10 +58,10 @@ abstract class AbstractDivLayoutTest extends FormIntegrationTestCase
 
         $loader->addPath(__DIR__.'/../../Resources/views', 'MopaBootstrap');
 
-        $environment = new Twig_Environment($loader, array('strict_variables' => true));
+        $environment = new \Twig_Environment($loader, array('strict_variables' => true));
         $environment->addExtension(new TranslationExtension(new StubTranslator()));
         $environment->addExtension(new IconExtension('fontawesome'));
-        $environment->addExtension(new FormExtension2());
+        $environment->addExtension(new MopaFormExtension());
         $environment->addGlobal('global', '');
         $environment->addExtension($this->extension);
 
